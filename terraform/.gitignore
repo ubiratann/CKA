@@ -2,4 +2,5 @@
 *.tfvars
 *.tfstate
 *.backup
+.terraform.tfstate.lock.info
 ssh/
