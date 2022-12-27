@@ -18,7 +18,7 @@ variable "nodes_map" {
   description = "List of key-par objects that uses the following structure: {'name' = 'my-name', 'is-master' = false|true } "
 }
 
-variable "gce_username" {
+variable "gce_host_username" {
   type        = string
   description = "Username used to login via ssh"
 }
