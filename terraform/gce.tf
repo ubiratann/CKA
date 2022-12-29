@@ -20,8 +20,4 @@ resource "google_compute_instance" "nodes" {
   }
 
   metadata_startup_script = (var.nodes_map[count.index].is_master ? file(var.master_script) : file(var.worker_script))
-
-  metadata = {
-    ssh-keys = "${var.gce_host_username}:${file(var.gce_ssh_key_file_path)}"
-  }
 }
