@@ -36,10 +36,10 @@ sudo apt-get install \
 
 # Instaling containerd from docker repository
 sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 
 echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 sudo apt-get update -y
@@ -50,38 +50,17 @@ curl https://github.com/containernetworking/plugins/releases/download/v1.1.1/cni
 mkdir -p /opt/cni/bin
 tar Cxzvf /opt/cni/bin cni-plugins-linux-amd64-v1.1.1.tgz
 
-# Opening port 6443 for KubeAPI
-sudo iptables -I INPUT  -p tcp --dport 6433 -j ACCEPT
-sudo iptables -I OUTPUT -p tcp --sport 6433 -j ACCEPT
-
-sudo iptables -I OUTPUT -p tcp --sport 6783 -j ACCEPT
-sudo iptables -I OUTPUT -p tcp --sport 6783 -j ACCEPT
-
-sudo iptables -I OUTPUT -p udp --sport 6783 -j ACCEPT
-sudo iptables -I OUTPUT -p udp --sport 6783 -j ACCEPT
-
-sudo iptables -I OUTPUT -p udp --sport 6784 -j ACCEPT
-sudo iptables -I OUTPUT -p udp --sport 6784 -j ACCEPT
-
-cat << EOF | sudo tee -a  /etc/rc.local
-iptables -I INPUT  -p tcp --dport 6433 -j ACCEPT
-iptables -I OUTPUT -p tcp --sport 6433 -j ACCEPT
-
-iptables -I OUTPUT -p tcp --sport 6783 -j ACCEPT
-iptables -I OUTPUT -p tcp --sport 6783 -j ACCEPT
-
-iptables -I OUTPUT -p udp --sport 6783 -j ACCEPT
-iptables -I OUTPUT -p udp --sport 6783 -j ACCEPT
-
-iptables -I OUTPUT -p udp --sport 6784 -j ACCEPT
-iptables -I OUTPUT -p udp --sport 6784 -j ACCEPT
-EOF
-
 sudo sed -i 's/disabled_plugins/#disabled_plugins/'  /etc/containerd/config.toml 
 cat << EOF | sudo tee -a /etc/containerd/config.toml 
-[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
-  [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
-    SystemdCgroup = true
+version = 2
+[plugins]
+  [plugins."io.containerd.grpc.v1.cri"]
+   [plugins."io.containerd.grpc.v1.cri".containerd]
+      [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
+        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+          runtime_type = "io.containerd.runc.v2"
+          [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+            SystemdCgroup = true
 EOF
 
 sudo systemctl restart containerd
