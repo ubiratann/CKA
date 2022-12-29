@@ -37,3 +37,18 @@ variable "worker_script" {
   type        = string
   description = "Scritp used to setup the workers node"
 }
+
+variable "master_instance_type" {
+  type        = string
+  description = "Master instance type"
+}
+
+variable "worker_instance_type" {
+  type        = string
+  description = "Worker instance type"
+}
+
+variable "os_image" {
+  type        = string
+  description = "OS image used in all nodes"
+}
