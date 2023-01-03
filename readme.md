@@ -9,8 +9,9 @@ This repository will be used in my studies to CKA (Certified Kubenetes Administr
 <br>
 <br>
 
+# Curriculum
 
-## 25% - CKA Curriculum
+## 25% - Cluster Architecture, Installation & Configuration
 
 - [ ] Manage role based access control (RBAC)
 - [x] Use Kubeadm to install a basic cluster
